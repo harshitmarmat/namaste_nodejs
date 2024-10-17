@@ -54,7 +54,10 @@ app.delete("/user", async (req, res) => {
 app.patch("/user", async (req, res) => {
   try {
     const { userEmail } = req.body;
-    await User.findOneAndUpdate({"email":userEmail},req.body,{strict:true});
+    await User.findOneAndUpdate({ email: userEmail }, req.body, {
+      // strict: true,
+      runValidators : true
+    });
     res.send("User updated successfully.");
   } catch (err) {
     res.status(400).send("Something went Wrong", err.message);
