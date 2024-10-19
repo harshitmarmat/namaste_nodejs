@@ -1,10 +1,30 @@
 const express = require("express");
 const { AdminAuth, UserAuth } = require("./middlewares/auth");
 const { connectDb } = require("./config/database");
+const bcrypt = require("bcrypt")
 const User = require("./models/User");
+const { validateSignUpData } = require("./utils/validate");
 const app = express();
 
 app.use(express.json());
+
+
+// creating user
+app.post("/signup", async (req, res) => {
+  try {
+    const {firstName, lastName , password, email} = req.body;
+    //validate data
+    validateSignUpData(req.body);
+    //encrypt pass
+    const passwordHash = await bcrypt.hash(password,10)
+    const user = new User({firstName,lastName,email,password:passwordHash});
+    await user.save();
+    res.send("User created Successfully");
+  } catch (err) {
+    res.status(400).send("Error in creating User: "+ err.message);
+  }
+});
+
 
 // get user data via email
 app.get("/user", async (req, res) => {
@@ -30,19 +50,6 @@ app.get("/feed", async (req, res) => {
   }
 });
 
-// creating user
-app.post("/signup", async (req, res) => {
-  console.log(req.body);
-  
-  const user = new User(req.body);
-  try {
-    await user.save();
-    res.send("User created Successfully");
-  } catch (err) {
-    console.error("Error in creating User: ", err);
-    res.status(400).send("Error in creating User: "+ err.message);
-  }
-});
 
 app.delete("/user", async (req, res) => {
   try {
