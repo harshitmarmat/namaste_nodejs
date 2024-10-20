@@ -4,12 +4,12 @@ const { connectDb } = require("./config/database");
 const bcrypt = require("bcrypt");
 const User = require("./models/User");
 const { validateSignUpData } = require("./utils/validate");
-const cookieParser = require("cookie-parser")
-const jwt = require("jsonwebtoken")
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 const app = express();
 
 app.use(express.json());
-app.use(cookieParser())
+app.use(cookieParser());
 // creating user
 app.post("/signup", async (req, res) => {
   try {
@@ -37,17 +37,16 @@ app.post("/login", async (req, res) => {
     const user = await User.findOne({ email: email });
     if (!user) throw new Error("Invalid Password.");
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    
-    if(isPasswordValid){
+
+    if (isPasswordValid) {
       // create jwt token
-      const token = await jwt.sign({userId:user._id},"DEV@tinder$")
+      const token = await jwt.sign({ userId: user._id }, "DEV@tinder$");
       // store it in cookie
-      
-      res.cookie("token",token)
-      res.send("Successfully logged in.")
-    }
-    else {
-      throw new Error("Invalid Password.")
+
+      res.cookie("token", token);
+      res.send("Successfully logged in.");
+    } else {
+      throw new Error("Invalid Password.");
     }
   } catch (err) {
     res.status(400).send("Error:" + err.message);
@@ -68,23 +67,22 @@ app.get("/user", async (req, res) => {
   }
 });
 
-//get profile data 
-app.get('/profile', async(req,res)=> {
+//get profile data
+app.get("/profile", async (req, res) => {
   try {
     const cookie = req.cookies;
-    const {token} = cookie;
-    if(!token) throw new Error("Please login.")
-    const data = await jwt.verify(token,"DEV@tinder$")
-    if(!data) throw new Error("Please login.")
-    const {userId} = data;
-    if(!userId) throw new Error("User not found.")
-    const user = await User.findById({_id : userId})    
-    res.send(user)
-  } catch(err){
-    res.status(400).send("Cannot get your profile:"+err.message)
+    const { token } = cookie;
+    if (!token) throw new Error("Please login.");
+    const data = await jwt.verify(token, "DEV@tinder$");
+    if (!data) throw new Error("Please login.");
+    const { userId } = data;
+    if (!userId) throw new Error("User not found.");
+    const user = await User.findById({ _id: userId });
+    res.send(user);
+  } catch (err) {
+    res.status(400).send("Cannot get your profile:" + err.message);
   }
-})
-
+});
 
 // get all user data
 app.get("/feed", async (req, res) => {
