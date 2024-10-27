@@ -10,12 +10,10 @@
     - PATCH /profile/update
 
 ## requestRouter
-    - POST /request/send
-    - POST /request/ignore
-    - POST /request/accept
-    - POST /request/reject
-    - GET /request/matches
-    - GET /request/recieveLike
+    - POST /request/send/:status/:toUserId
+    - POST /request/reveiew/:status/:fromUserId
 
-## feedRouter
-    - GET /feed
+## userRouter
+    - GET /user/requests/received
+    - GET /user/connections
+    - GET /user/feed
