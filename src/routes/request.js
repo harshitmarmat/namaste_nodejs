@@ -60,12 +60,12 @@ requestHandler.post(
 );
 
 requestHandler.post(
-  "/request/review/:status/:fromUserId",
+  "/request/review/:status/:requestId",
   userAuth,
   async (req, res) => {
     try {
       const allowedField = ["accepted", "rejected"];
-      const { status, fromUserId } = req.params;
+      const { status, requestId } = req.params;
       const loggedInUser = req.user;
 
       if (!allowedField.includes(status)) {
@@ -75,8 +75,8 @@ requestHandler.post(
       }
 
       const connectionRequest = await ConnectionRequestModel.findOne({
-        fromUserId: fromUserId,
-        toUserId: loggedInUser,
+        _id: requestId,
+        toUserId: loggedInUser._id,
         status: "interested",
       });
       if(!connectionRequest){
