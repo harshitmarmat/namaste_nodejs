@@ -85,7 +85,6 @@ requestHandler.post(
         })
       }
       connectionRequest.status = status;
-
       await connectionRequest.save();
       res.json(connectionRequest);
     } catch (err) {

@@ -51,6 +51,7 @@ const userSchema = new mongoose.Schema(
           throw new Error("Enter a valid image url.");
         }
       },
+      default : "https://www.kindpng.com/picc/m/252-2524695_dummy-profile-image-jpg-hd-png-download.png"
     },
     about: {
       type: String,

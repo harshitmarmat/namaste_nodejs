@@ -70,11 +70,12 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
     // const feed = await User.find({
     //   _id: {
     //     $nin: ignoredId,
-    //   },
+    //   }, 
     // }).select(passAllowField);
 
 
     const ignoredIds = new Set();
+    ignoredIds.add(loggedInUser._id)
     connectRequest.forEach((request)=>{
         ignoredIds.add(request.fromUserId._id.toString())
         ignoredIds.add(request.toUserId._id.toString())
