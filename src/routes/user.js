@@ -36,9 +36,9 @@ userRouter.get("/user/requests/connection", userAuth, async (req, res) => {
 
     const data = connectionRequests.map((request) => {
       if (request.fromUserId._id.equals(loggedInUser._id)) {
-        return request.toUserId;
+        return { userData: request.toUserId , conversationThread: request.conversationThread };
       }
-      return request.fromUserId;
+      return { userData: request.fromUserId  , conversationThread: request.conversationThread};
     });
     res.json(data);
   } catch (err) {
@@ -50,9 +50,9 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
     const page = req.query.page || 1;
-    let limit  = req.query.limit || 10;
+    let limit = req.query.limit || 10;
     limit = limit > 50 ? 50 : limit;
-    const skip = (page-1)*limit
+    const skip = (page - 1) * limit;
 
     const connectRequest = await ConnectionRequestModel.find({
       $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
@@ -70,22 +70,23 @@ userRouter.get("/user/feed", userAuth, async (req, res) => {
     // const feed = await User.find({
     //   _id: {
     //     $nin: ignoredId,
-    //   }, 
+    //   },
     // }).select(passAllowField);
 
-
     const ignoredIds = new Set();
-    ignoredIds.add(loggedInUser._id)
-    connectRequest.forEach((request)=>{
-        ignoredIds.add(request.fromUserId._id.toString())
-        ignoredIds.add(request.toUserId._id.toString())
-    })
+    ignoredIds.add(loggedInUser._id);
+    connectRequest.forEach((request) => {
+      ignoredIds.add(request.fromUserId._id.toString());
+      ignoredIds.add(request.toUserId._id.toString());
+    });
 
     const feedData = await User.find({
-        _id : {$nin : Array.from(ignoredIds)}
-    }).select(passAllowField)
-    .skip(skip).limit(limit)
-    
+      _id: { $nin: Array.from(ignoredIds) },
+    })
+      .select(passAllowField)
+      .skip(skip)
+      .limit(limit);
+
     console.log(feedData);
 
     res.json(feedData);

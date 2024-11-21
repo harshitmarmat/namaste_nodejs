@@ -2,6 +2,7 @@ const express = require("express");
 const { userAuth } = require("../middlewares/auth");
 const User = require("../models/User");
 const ConnectionRequestModel = require("../models/connectionRequest");
+const conversationModel = require("../models/conversation");
 
 const requestHandler = express.Router();
 
@@ -78,14 +79,22 @@ requestHandler.post(
         _id: requestId,
         toUserId: loggedInUser._id,
         status: "interested",
-      });
+      })
       if(!connectionRequest){
         return res.status(400).json({
           message : "Connection not found."
         })
       }
+      const conversation = new conversationModel({
+        participants : [connectionRequest.toUserId,connectionRequest.fromUserId]
+      })
+      
+      connectionRequest.conversationThread = conversation._id
       connectionRequest.status = status;
       await connectionRequest.save();
+      const con = await conversation.save();
+      console.log(con);
+      
       res.json(connectionRequest);
     } catch (err) {
       res.status(400).send("Error: " + err.message);

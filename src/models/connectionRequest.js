@@ -19,6 +19,10 @@ const connectionRequestSchema = new mongoose.Schema(
         message: `{VALUE} is incorrect status type.`,
       },
     },
+    conversationThread : {
+      type : mongoose.Schema.Types.ObjectId,
+      ref : "conversationModel"
+    }
   },
   {
     timestamps: true,
