@@ -13,7 +13,6 @@ requestHandler.post(
     try {
       const fromUserId = req.user._id;
       const { status, toUserId } = req.params;
-      console.log(status, toUserId);
 
       const allowedField = ["interested", "ignored"];
       if (!allowedField.includes(status)) {
@@ -21,9 +20,7 @@ requestHandler.post(
           message: "Invalid action: " + status,
         });
       }
-      console.log("here");
       const toUser = await User.findById(toUserId);
-      console.log(toUser);
 
       if (!toUser) {
         return res.status(404).json({
@@ -47,7 +44,6 @@ requestHandler.post(
         status,
       });
       await requestConnection.save();
-      console.log("test2");
       res.json({
         message: `${req.user.firstName} is ${
           status === "ignored" ? "not" : ""
@@ -79,7 +75,7 @@ requestHandler.post(
         _id: requestId,
         toUserId: loggedInUser._id,
         status: "interested",
-      })
+      });
       if(!connectionRequest){
         return res.status(400).json({
           message : "Connection not found."
@@ -93,8 +89,6 @@ requestHandler.post(
       connectionRequest.status = status;
       await connectionRequest.save();
       const con = await conversation.save();
-      console.log(con);
-      
       res.json(connectionRequest);
     } catch (err) {
       res.status(400).send("Error: " + err.message);

@@ -17,3 +17,16 @@
     - GET /user/requests/received
     - GET /user/connections
     - GET /user/feed
+
+
+## Event 
+    - GET /events (all events)
+    - GET /event/:id (event_id)
+
+    ## Event Detail 
+    - Event Name 
+    - Event Date / time
+    - Event Venue
+    - Event capacity
+    - Event participated member
+    - Event participants

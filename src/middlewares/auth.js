@@ -2,6 +2,10 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 
+const getUserId = async(token) => {
+    return await jwt.verify(token,"DEV@tinder$");
+}
+
 const userAuth = async(req, res, next) => {
     try{
         const cookie = req.cookies;
@@ -9,8 +13,9 @@ const userAuth = async(req, res, next) => {
         
         if(!token) {
             return res.status(401).send("Please Login.");
-        }        const decodedData = await jwt.verify(token,"DEV@tinder$");
-        const {userId} = decodedData;
+        }        
+       
+        const {userId} = await getUserId(token);
         const user = await User.findById({_id : userId});
         
         if(!user) throw new Error("User not found.");
@@ -22,4 +27,4 @@ const userAuth = async(req, res, next) => {
 
 }
 
-module.exports = { userAuth}
+module.exports = { userAuth , getUserId}
